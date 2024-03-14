@@ -49,5 +49,9 @@ pxar.workspace = true
 
 pbs-api-types.workspace = true
 pbs-buildcfg.workspace = true
-pbs-datastore.workspace = true
+pbs-datastore = { workspace = true, default-features = false }
 pbs-tools.workspace = true
+
+[features]
+default = ["fuse"]
+fuse = ["pbs-datastore/fuse"]

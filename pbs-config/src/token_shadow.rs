@@ -48,7 +48,13 @@ fn write_file(data: HashMap<Authid, String>) -> Result<(), Error> {
     proxmox_sys::fs::replace_file(CONF_FILE, &json, options, true)
 }
 
+#[cfg(not(feature = "fuse"))]
+pub fn verify_secret(tokenid: &Authid, secret: &str) -> Result<(), Error> {
+    panic!("verify_secret is not available in the defused build. (How did you reach this place, anyhow?)");
+}
+
 /// Verifies that an entry for given tokenid / API token secret exists
+#[cfg(feature = "fuse")]
 pub fn verify_secret(tokenid: &Authid, secret: &str) -> Result<(), Error> {
     if !tokenid.is_token() {
         bail!("not an API token ID");
@@ -61,7 +67,13 @@ pub fn verify_secret(tokenid: &Authid, secret: &str) -> Result<(), Error> {
     }
 }
 
+#[cfg(not(feature = "fuse"))]
+pub fn set_secret(tokenid: &Authid, secret: &str) -> Result<(), Error> {
+    panic!("set_secret is not available in the defused build. (How did you reach this place, anyhow?)");
+}
+
 /// Adds a new entry for the given tokenid / API token secret. The secret is stored as salted hash.
+#[cfg(feature = "fuse")]
 pub fn set_secret(tokenid: &Authid, secret: &str) -> Result<(), Error> {
     if !tokenid.is_token() {
         bail!("not an API token ID");

@@ -24,7 +24,7 @@ pathpatterns.workspace = true
 pxar.workspace = true
 
 proxmox-async.workspace = true
-proxmox-fuse.workspace = true
+proxmox-fuse = { workspace = true, optional = true }
 proxmox-human-byte.workspace = true
 proxmox-io.workspace = true
 proxmox-router = { workspace = true, features = [ "cli" ] }
@@ -38,7 +38,11 @@ pbs-buildcfg.workspace = true
 pbs-client.workspace = true
 pbs-config.workspace = true
 pbs-datastore.workspace = true
-pbs-fuse-loop.workspace = true
+pbs-fuse-loop = { workspace = true, optional = true }
 pbs-key-config.workspace = true
-pbs-pxar-fuse.workspace = true
+pbs-pxar-fuse = { workspace = true, default-features = false }
 pbs-tools.workspace = true
+
+[features]
+default = ["fuse"]
+fuse = ["dep:proxmox-fuse", "dep:pbs-fuse-loop", "pbs-pxar-fuse/fuse"]

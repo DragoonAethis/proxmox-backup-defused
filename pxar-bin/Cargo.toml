@@ -25,5 +25,9 @@ proxmox-schema = { workspace = true, features = [ "api-macro" ] }
 proxmox-sys.workspace = true
 
 pbs-client.workspace = true
-pbs-pxar-fuse.workspace = true
+pbs-pxar-fuse = { workspace = true, default-features = false }
 pbs-tools.workspace = true
+
+[features]
+default = ["fuse"]
+fuse = ["pbs-pxar-fuse/fuse"]

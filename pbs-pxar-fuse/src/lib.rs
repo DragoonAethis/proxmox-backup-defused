@@ -22,10 +22,14 @@ use futures::stream::{StreamExt, TryStreamExt};
 use proxmox_io::vec;
 use pxar::accessor::{self, EntryRangeInfo, ReadAt};
 
-use proxmox_fuse::requests::{self, FuseRequest};
-use proxmox_fuse::{EntryParam, Fuse, ReplyBufState, Request, ROOT_ID};
 use proxmox_lang::io_format_err;
 use proxmox_sys::fs::xattr;
+
+#[cfg(feature = "fuse")]
+use proxmox_fuse::requests::{self, FuseRequest};
+
+#[cfg(feature = "fuse")]
+use proxmox_fuse::{EntryParam, Fuse, ReplyBufState, Request, ROOT_ID};
 
 /// We mark inodes for regular files this way so we know how to access them.
 const NON_DIRECTORY_INODE: u64 = 1u64 << 63;
@@ -54,6 +58,7 @@ pub struct Session {
     fut: Pin<Box<dyn Future<Output = Result<(), Error>> + Send + Sync + 'static>>,
 }
 
+#[cfg(feature = "fuse")]
 impl Session {
     /// Create a fuse session for an archive.
     pub async fn mount_path(
@@ -95,6 +100,7 @@ impl Session {
     }
 }
 
+#[cfg(feature = "fuse")]
 impl Future for Session {
     type Output = Result<(), Error>;
 
@@ -121,6 +127,7 @@ struct Lookup {
     content_range: Option<Range<u64>>,
 }
 
+#[cfg(feature = "fuse")]
 impl Lookup {
     fn new(
         inode: u64,
@@ -179,12 +186,14 @@ struct LookupRef<'a> {
 unsafe impl<'a> Send for LookupRef<'a> {}
 unsafe impl<'a> Sync for LookupRef<'a> {}
 
+#[cfg(feature = "fuse")]
 impl<'a> Clone for LookupRef<'a> {
     fn clone(&self) -> Self {
         self.get_ref(self.session)
     }
 }
 
+#[cfg(feature = "fuse")]
 impl<'a> std::ops::Deref for LookupRef<'a> {
     type Target = Lookup;
 
@@ -193,6 +202,7 @@ impl<'a> std::ops::Deref for LookupRef<'a> {
     }
 }
 
+#[cfg(feature = "fuse")]
 impl<'a> Drop for LookupRef<'a> {
     fn drop(&mut self) {
         if self.lookup.is_null() {
@@ -206,6 +216,7 @@ impl<'a> Drop for LookupRef<'a> {
     }
 }
 
+#[cfg(feature = "fuse")]
 impl<'a> LookupRef<'a> {
     fn leak(mut self) -> &'a Lookup {
         unsafe { &*mem::replace(&mut self.lookup, std::ptr::null()) }
@@ -218,6 +229,7 @@ struct SessionImpl {
     lookups: RwLock<BTreeMap<u64, Box<Lookup>>>,
 }
 
+#[cfg(feature = "fuse")]
 impl SessionImpl {
     fn new(accessor: Accessor, verbose: bool) -> Self {
         let root = Lookup::new(
@@ -641,6 +653,7 @@ impl SessionImpl {
     }
 }
 
+#[cfg(feature = "fuse")]
 #[inline]
 fn to_entry(entry: &FileEntry) -> Result<EntryParam, Error> {
     to_entry_param(to_inode(entry), entry)
@@ -655,6 +668,7 @@ fn to_inode(entry: &FileEntry) -> u64 {
     }
 }
 
+#[cfg(feature = "fuse")]
 fn to_entry_param(inode: u64, entry: &pxar::Entry) -> Result<EntryParam, Error> {
     Ok(EntryParam::simple(inode, to_stat(inode, entry)?))
 }

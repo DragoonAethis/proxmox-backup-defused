@@ -77,7 +77,7 @@ proxmox-serde = "0.1.1"
 proxmox-shared-memory = "0.3.0"
 proxmox-sortable-macro = "0.1.2"
 proxmox-subscription = { version = "0.4.2", features = [ "api-types" ] }
-proxmox-sys = "0.5.3"
+proxmox-sys = { version = "0.5.3", default-features = false, features = [ "acl", "timer" ] }
 proxmox-tfa = { version = "4.0.4", features = [ "api", "api-types" ] }
 proxmox-time = "1.1.6"
 proxmox-uuid = "1"
@@ -90,12 +90,12 @@ pxar = "0.10.2"
 # PBS workspace
 pbs-api-types = { path = "pbs-api-types" }
 pbs-buildcfg = { path = "pbs-buildcfg" }
-pbs-client = { path = "pbs-client" }
-pbs-config = { path = "pbs-config" }
-pbs-datastore = { path = "pbs-datastore" }
+pbs-client = { path = "pbs-client", default-features = false }
+pbs-config = { path = "pbs-config", default-features = false }
+pbs-datastore = { path = "pbs-datastore", default-features = false }
 pbs-fuse-loop = { path = "pbs-fuse-loop" }
 pbs-key-config = { path = "pbs-key-config" }
-pbs-pxar-fuse = { path = "pbs-pxar-fuse" }
+pbs-pxar-fuse = { path = "pbs-pxar-fuse", default-features = false }
 pbs-tape = { path = "pbs-tape" }
 pbs-tools = { path = "pbs-tools" }
 
@@ -126,7 +126,7 @@ nix = "0.26.1"
 nom = "7"
 num-traits = "0.2"
 once_cell = "1.3.1"
-openssl = "0.10.40"
+openssl = { version = "0.10.40", features = ["vendored"] }
 percent-encoding = "2.1"
 pin-project-lite = "0.2"
 regex = "1.5.5"
@@ -242,38 +242,38 @@ proxmox-rrd.workspace = true
 # Local path overrides
 # NOTE: You must run `cargo update` after changing this for it to take effect!
 [patch.crates-io]
+proxmox-apt = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-async = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-auth-api = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-borrow = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-compression = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-fuse = { git = "git://git.proxmox.com/git/proxmox-fuse" }
+proxmox-http = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-human-byte = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-io = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-lang = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-ldap = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-metrics = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-openid = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-rest-server = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-router = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-rrd = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-schema = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-section-config = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-serde = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-shared-memory = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-sortable-macro = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-subscription = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-sys = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-tfa = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-time = { git = "git://git.proxmox.com/git/proxmox" }
+proxmox-uuid = { git = "git://git.proxmox.com/git/proxmox" }
 
-#proxmox-apt = { path = "../proxmox/proxmox-apt" }
-#proxmox-async = { path = "../proxmox/proxmox-async" }
-#proxmox-auth-api = { path = "../proxmox/proxmox-auth-api" }
-#proxmox-borrow = { path = "../proxmox/proxmox-borrow" }
-#proxmox-compression = { path = "../proxmox/proxmox-compression" }
-#proxmox-fuse = { path = "../proxmox-fuse" }
-#proxmox-http = { path = "../proxmox/proxmox-http" }
-#proxmox-human-byte = { path = "../proxmox/proxmox-human-byte" }
-#proxmox-io = { path = "../proxmox/proxmox-io" }
-#proxmox-lang = { path = "../proxmox/proxmox-lang" }
-#proxmox-ldap = { path = "../proxmox/proxmox-ldap" }
-#proxmox-metrics = { path = "../proxmox/proxmox-metrics" }
-#proxmox-openid = { path = "../proxmox/proxmox-openid" }
-#proxmox-rest-server = { path = "../proxmox/proxmox-rest-server" }
-#proxmox-router = { path = "../proxmox/proxmox-router" }
-#proxmox-rrd = { path = "../proxmox/proxmox-rrd" }
-#proxmox-schema = { path = "../proxmox/proxmox-schema" }
-#proxmox-section-config = { path = "../proxmox/proxmox-section-config" }
-#proxmox-serde = { path = "../proxmox/proxmox-serde" }
-#proxmox-shared-memory = { path = "../proxmox/proxmox-shared-memory" }
-#proxmox-sortable-macro = { path = "../proxmox/proxmox-sortable-macro" }
-#proxmox-subscription = { path = "../proxmox/proxmox-subscription" }
-#proxmox-sys = { path = "../proxmox/proxmox-sys" }
-#proxmox-tfa = { path = "../proxmox/proxmox-tfa" }
-#proxmox-time = { path = "../proxmox/proxmox-time" }
-#proxmox-uuid = { path = "../proxmox/proxmox-uuid" }
-
-#proxmox-acme = { path = "../proxmox/proxmox-acme" }
-#pathpatterns = {path = "../pathpatterns" }
-#pxar = { path = "../pxar" }
+proxmox-acme = { git = "git://git.proxmox.com/git/proxmox" }
+pathpatterns = { git = "git://git.proxmox.com/git/pathpatterns" }
+pxar = { git = "git://git.proxmox.com/git/pxar" }
 
 [features]
-default = []
+default = ["fuse"]
+fuse = ["pbs-client/fuse", "pbs-config/fuse", "pbs-datastore/fuse"]
 #valgrind = ["valgrind_request"]

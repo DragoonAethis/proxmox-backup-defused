@@ -11,9 +11,13 @@ libc.workspace = true
 log.workspace = true
 tokio.workspace = true
 
-proxmox-fuse.workspace = true
+proxmox-fuse = { workspace = true, optional = true }
 proxmox-io.workspace = true
 proxmox-lang.workspace=true
-proxmox-sys.workspace = true
+proxmox-sys = { workspace = true, features = [ "acl" ] }
 
 pxar.workspace = true
+
+[features]
+default = ["fuse"]
+fuse = ["dep:proxmox-fuse"]

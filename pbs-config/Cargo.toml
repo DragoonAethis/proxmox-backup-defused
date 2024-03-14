@@ -20,8 +20,12 @@ proxmox-router = { workspace = true, default-features = false }
 proxmox-schema.workspace = true
 proxmox-section-config.workspace = true
 proxmox-shared-memory.workspace = true
-proxmox-sys = { workspace = true, features = [ "acl", "crypt", "timer" ] }
+proxmox-sys = { workspace = true, features = [ "acl", "timer" ] }
 proxmox-time.workspace = true
 
 pbs-api-types.workspace = true
 pbs-buildcfg.workspace = true
+
+[features]
+default = ["fuse"]
+fuse = ["proxmox-sys/crypt"]

@@ -38,6 +38,10 @@ proxmox-sys.workspace = true
 
 pbs-api-types.workspace = true
 pbs-buildcfg.workspace = true
-pbs-config.workspace = true
+pbs-config = { workspace = true, default-features = false }
 pbs-key-config.workspace = true
 pbs-tools.workspace = true
+
+[features]
+default = ["fuse"]
+fuse = ["pbs-config/fuse"]

@@ -390,6 +390,7 @@ async fn create_archive(
     Ok(())
 }
 
+#[cfg(feature = "fuse")]
 #[api(
     input: {
         properties: {
@@ -448,6 +449,22 @@ fn dump_archive(archive: String) -> Result<(), Error> {
     Ok(())
 }
 
+#[cfg(feature = "fuse")]
+fn add_fuse_opts(cmd_def: CliCommandMap) -> CliCommandMap {
+    cmd_def.insert(
+        "mount",
+        CliCommand::new(&API_METHOD_MOUNT_ARCHIVE)
+            .arg_param(&["archive", "mountpoint"])
+            .completion_cb("archive", complete_file_name)
+            .completion_cb("mountpoint", complete_file_name),
+    )
+}
+
+#[cfg(not(feature = "fuse"))]
+fn add_fuse_opts(cmd_def: CliCommandMap) -> CliCommandMap {
+    cmd_def
+}
+
 fn main() {
     init_cli_logger("PXAR_LOG", "info");
 
@@ -468,22 +485,17 @@ fn main() {
                 .completion_cb("files-from", complete_file_name),
         )
         .insert(
-            "mount",
-            CliCommand::new(&API_METHOD_MOUNT_ARCHIVE)
-                .arg_param(&["archive", "mountpoint"])
-                .completion_cb("archive", complete_file_name)
-                .completion_cb("mountpoint", complete_file_name),
-        )
-        .insert(
             "list",
             CliCommand::new(&API_METHOD_DUMP_ARCHIVE)
                 .arg_param(&["archive"])
                 .completion_cb("archive", complete_file_name),
         );
 
+    let cmd_def_full = add_fuse_opts(cmd_def);
+
     let rpcenv = CliEnvironment::new();
     run_cli_command(
-        cmd_def,
+        cmd_def_full,
         rpcenv,
         Some(|future| proxmox_async::runtime::main(future)),
     );

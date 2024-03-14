@@ -64,8 +64,6 @@ use pbs_tools::json;
 
 mod benchmark;
 pub use benchmark::*;
-mod mount;
-pub use mount::*;
 mod task;
 pub use task::*;
 mod catalog;
@@ -74,6 +72,14 @@ mod snapshot;
 pub use snapshot::*;
 pub mod key;
 pub mod namespace;
+
+
+#[cfg(feature = "fuse")]
+mod mount;
+
+#[cfg(feature = "fuse")]
+pub use mount::*;
+
 
 fn record_repository(repo: &BackupRepository) {
     let base = match BaseDirectories::with_prefix("proxmox-backup") {
@@ -1715,6 +1721,19 @@ impl ReadAt for BufferedDynamicReadAt {
     }
 }
 
+#[cfg(feature = "fuse")]
+fn add_fuse_opts(cmd_def: CliCommandMap) -> CliCommandMap {
+    cmd_def
+        .insert("mount", mount_cmd_def())
+        .insert("map", map_cmd_def())
+        .insert("unmap", unmap_cmd_def())
+}
+
+#[cfg(not(feature = "fuse"))]
+fn add_fuse_opts(cmd_def: CliCommandMap) -> CliCommandMap {
+    cmd_def
+}
+
 fn main() {
     pbs_tools::setup_libc_malloc_opts();
     init_cli_logger("PBS_LOG", "info");
@@ -1782,9 +1801,6 @@ fn main() {
         .insert("snapshot", snapshot_mgtm_cli())
         .insert("status", status_cmd_def)
         .insert("key", key::cli())
-        .insert("mount", mount_cmd_def())
-        .insert("map", map_cmd_def())
-        .insert("unmap", unmap_cmd_def())
         .insert("catalog", catalog_mgmt_cli())
         .insert("task", task_mgmt_cli())
         .insert("version", version_cmd_def)
@@ -1796,9 +1812,11 @@ fn main() {
         .alias(&["upload-log"], &["snapshot", "upload-log"])
         .alias(&["snapshots"], &["snapshot", "list"]);
 
+    let cmd_def_full = add_fuse_opts(cmd_def);
+
     let rpcenv = CliEnvironment::new();
     run_cli_command(
-        cmd_def,
+        cmd_def_full,
         rpcenv,
         Some(|future| proxmox_async::runtime::main(future)),
     );
