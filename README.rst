@@ -1,3 +1,42 @@
+Defused Proxmox Backup Client
+*****************************
+
+This is a slightly patched up version of proxmox-backup-client 3.x that:
+
+- Does not depend on FUSE 3 at all (and cannot mount archives)
+- Does not depend on system-provided libxcrypt and OpenSSL
+
+This allows building and running PBS Client 3.x on Ubuntu 18.04 and other,
+slightly older distros than what's officially supported. (For reference,
+official Client 1.x runs on Ubuntu 20.04 and Debian 10.)
+
+To run these binaries: ``apt-get install -y acl libuuid1 libattr1``
+
+To build them, install deps above and::
+
+    apt-get install -y build-essential clang-10 git libacl1-dev uuid-dev curl
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile=minimal
+    source "$HOME/.cargo/env"
+    cargo build \
+        --no-default-features \
+        --package proxmox-backup-client \
+        --bin proxmox-backup-client \
+        --package pxar-bin \
+        --bin pxar \
+        --release
+
+Your binaries will be in ``target/release/{proxmox-backup-client,pxar}``.
+
+Note that this repo references upstream git repos for some crates, which
+can break over time. You might have to rebase or fix something before
+a new build starts working here. The build throws a lot of ``unused``
+warnings too, which are benign.
+
+Known good ``proxmox.git`` commit: ``c67a13f1d7233c5621e717eb9a4222bff870e15a``
+
+This is just a transitional package to safely get me off some older OSes.
+The original README follows.
+
 
 Build & Release Notes
 *********************
