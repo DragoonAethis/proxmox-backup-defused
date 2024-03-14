@@ -1,0 +1,28 @@
+name: Build
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup the build environment
+        run: |
+          docker build -f .github/buildenv.Dockerfile -t pbs-client-buildenv .github
+      - name: Build proxmox-backup-client
+        run: |
+          docker run -t --rm -v .:/build pbs-client-buildenv /root/.cargo/bin/cargo build \
+            --no-default-features \
+            --package proxmox-backup-client \
+            --bin proxmox-backup-client \
+            --package pxar-bin \
+            --bin pxar \
+            --release
+      - name: Save built binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries
+          path: |
+            target/release/proxmox-backup-client
+            target/release/pxar
