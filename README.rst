@@ -1,3 +1,11 @@
+! DEPRECATED !
+**************
+
+Proxmox now officially publishes static binaries (proxmox-backup-client-static).
+They work outside of Debian as well, just unpack the binary from the .deb. Grab
+it here: http://download.proxmox.com/debian/pbs-client/dists/bookworm/main/binary-amd64/
+
+
 Defused Proxmox Backup Client
 *****************************
 
